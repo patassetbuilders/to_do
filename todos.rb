@@ -7,6 +7,7 @@ require "tilt/erubis"
 configure do
   enable :sessions
   set :session_secret, 'secret'
+  set :erb, :escape_html => true
 end
 
 before do
@@ -14,6 +15,10 @@ before do
 end
 
 helpers do
+  
+  def h(content)
+    Rack::Utils.escape_html(content)
+  end
   
   def list_class(list)
     "complete" if list_completed?(list)
@@ -84,14 +89,14 @@ end
 # show a list
 get "/list/:list_id" do
   @list_id = params[:list_id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id)
   erb :show_list, layout: :layout
 end
 
 # edit a list 
 get "/list/:list_id/edit" do
   @list_id = params[:list_id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id) #replaces below @list = session[:lists][@list_id] 
   erb :edit_list, layout: :layout
 end
 
@@ -99,7 +104,7 @@ end
 post "/list/:list_id" do
   @list_id = params[:list_id].to_i
   list_name = params[:list_name].strip
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id) 
   error = error_for_list_name(list_name)
   if error
     session[:error] = error
@@ -114,7 +119,7 @@ end
 # mark all todos 
 post "/list/:list_id/update_status_of_all_todos" do
   @list_id = params[:list_id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id) 
   @list[:todos].each_with_index do |todo, index|
     todo[:completed] = true
   end
@@ -133,7 +138,7 @@ end
 #add a new todo to the list
 post "/list/:list_id/create_todo" do
   @list_id = params[:list_id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id) #was @list = session[:lists][@list_id]
   text = params[:todo].strip
   error = error_for_todo(text)
   if error
@@ -150,7 +155,7 @@ end
 post '/list/:list_id/todos/:todo_id/destroy' do
    @list_id = params[:list_id].to_i
    @todo_id = params[:todo_id].to_i
-   @list = session[:lists][@list_id]
+   @list = load_list(@list_id) #@list = session[:lists][@list_id]
    @todos = @list[:todos]
    @todos.delete_at(@todo_id)
    session[:success] = "The todo has been deleted"
@@ -162,7 +167,7 @@ end
 post '/list/:list_id/todo/:todo_id/completed' do
   @list_id = params[:list_id].to_i
   @todo_id = params[:todo_id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id) #@list = session[:lists][@list_id]
   @todo = @list[:todos][@todo_id]
   if params[:completed] == 'true'
     @todo[:completed] = true
@@ -187,4 +192,12 @@ def error_for_todo(text)
   if !(1..100).cover? text.size 
     "To do text must be between 1 and 100 characters long"
   end  
+end
+
+def load_list(index)
+  list = session[:lists][index] if index
+  return list if list
+
+  session[:error] = "The specified list was not found."
+  redirect "/lists"
 end

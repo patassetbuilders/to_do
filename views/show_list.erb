@@ -36,7 +36,7 @@
       <input type="hidden" name="completed" value="<%= !todo[:completed] %>" />
       <button type="submit">Mark Completed</button>
     </form>  
-    <h3><%= todo[:name] %> completed: <%=todo[:completed]%></h3>
+    <h3><%=h todo[:name] %> completed: <%=todo[:completed]%></h3>
     <form action="/list/<%=@list_id%>/todos/<%= index %>/destroy" method="post" class="delete">
       <button type="submit">Delete</button>
     </form> 
