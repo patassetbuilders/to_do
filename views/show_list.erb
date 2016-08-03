@@ -30,8 +30,7 @@
 <section id="todos">
 <ul>
   <% sort_todos(@list[:todos]) do |todo, index|%>
-  
-  <li class="<%= "complete" if todo[:completed] %>">
+  <li class="<%= if todo[:completed] then 'complete' end %>">
     <form action="/list/<%= @list_id %>/todo/<%= index %>/completed" method="post" class="check" >
       <input type="hidden" name="completed" value="<%= !todo[:completed] %>" />
       <button type="submit">Mark Completed</button>
