@@ -55,9 +55,6 @@ helpers do
 end
 
 
-
-
-
 get "/" do
   redirect "/lists"
 end
@@ -132,8 +129,12 @@ end
 post "/list/:id/destroy" do
   @list_id = params[:id].to_i
   session[:lists].delete_at(@list_id)
-  session[:success] = 'List Destroyed'
-  redirect to "/lists"
+  if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+    "/lists"
+  else
+    session[:success] = 'List Destroyed'
+    redirect to "/lists"
+  end
 end
 
 #add a new todo to the list
@@ -159,8 +160,12 @@ post '/list/:list_id/todos/:todo_id/destroy' do
    @list = load_list(@list_id) #@list = session[:lists][@list_id]
    @todos = @list[:todos]
    @todos.delete_at(@todo_id)
-   session[:success] = "The todo has been deleted"
-   redirect to "/list/#{@list_id}"
+   if env["HTTP_X_REQUESTED_WITH"] =="XMLHttpRequest"
+     status 204
+   else
+     session[:success] = "The todo has been deleted"
+     redirect to "/list/#{@list_id}"
+   end
 end
 
 
