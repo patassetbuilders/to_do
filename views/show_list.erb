@@ -6,7 +6,7 @@
         <form action="/list/<%= @list_id %>/update_status_of_all_todos" method="post" >
           <button class="check" type="submit">Complete All</button>
         </form>
-      <li><a class="edit" href="/list/<%= params[:id]%>/edit">Edit</a></li>
+      <li><a class="edit" href="/list/<%= params[:list_id]%>/edit">Edit</a></li>
     </ul>
   </header>
 </section>
@@ -29,14 +29,14 @@
 <%# list todo items%>
 <section id="todos">
 <ul>
-  <% sort_todos(@list[:todos]) do |todo, index|%>
+  <% sort_todos(@list[:todos]) do |todo|%>
   <li class="<%= if todo[:completed] then 'complete' end %>">
-    <form action="/list/<%= @list_id %>/todo/<%= index %>/completed" method="post" class="check" >
+    <form action="/list/<%= @list_id %>/todo/<%= todo[:id] %>/completed" method="post" class="check" >
       <input type="hidden" name="completed" value="<%= !todo[:completed] %>" />
       <button type="submit">Mark Completed</button>
     </form>  
     <h3><%=h todo[:name] %> completed: <%=todo[:completed]%></h3>
-    <form action="/list/<%=@list_id%>/todos/<%= index %>/destroy" method="post" class="delete">
+    <form action="/list/<%=@list[:id]%>/todos/<%= todo[:id]%>/destroy" method="post" class="delete">
       <button type="submit">Delete</button>
     </form> 
   </li>
