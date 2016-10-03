@@ -2,10 +2,10 @@
   <header>
     <h2>Editing: "<%= @list[:name] %>"</h2>
     <ul>
-      <li><a class="delete" href="/lists/<%= params[:id] %>/destroy">Delete Lists</a></li>
-        <form action="/list/<%=@list_id%>/destroy" method="post">
+      <li>
+        <form class="delete" action="/list/<%= @list[:id] %>/destroy" method ="post">
           <button type="submit" class="delete">Delete List</button>
-        </form> 
+        </form>
       </li>
     </ul>
   </header>
@@ -22,6 +22,6 @@
   <dl>
   <fieldset class="actions">
     <input type="submit" value="Update">
-    <a href="/list/<%=params[:id]%>">Cancel</a>
+    <a href="/list/<%=params[:list_id]%>">Cancel</a>
   </fieldset>
 </forms>

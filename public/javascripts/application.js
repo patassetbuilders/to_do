@@ -1,6 +1,5 @@
 // application.js
- console.log("This is a test");
-
+// console.log("This is a test");
   $(function(){
     $("form.delete").submit(function(event) {
       event.preventDefault();
